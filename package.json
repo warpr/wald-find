@@ -1,0 +1,16 @@
+{
+  "name": "mocha-browser",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "bin/test"
+  },
+  "author": "Kuno Woudt <kuno@frob.nl>",
+  "license": "copyleft-next-0.3.0",
+  "dependencies": {
+    "eslint": "^2.7.0",
+    "harmony-proxy": "^1.0.0",
+    "mocha": "^2.4.5"
+  }
+}
