@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+cd "$DIR/.."
+
+python -m SimpleHTTPServer 8000 &
+
+xdg-open "http://localhost:8000/test/runner.html"
+
+fg

@@ -8,24 +8,34 @@
 
 'use strict';
 
-var assert = require ('assert');
+var assert = null;
+
+if (typeof require === "function") {
+    assert = require ('chai').assert;
+} else {
+    assert = chai.assert;
+}
+
+/*
 var fs = require ('fs');
 var package_json = JSON.parse(fs.readFileSync (__dirname + "/../package.json"));
+*/
 
 suite ('suite', function () {
+    /*
     test ('version', function () {
         assert.equal (package_json.version, "0.0.1");
     });
-
+*/
     test ('math', function () {
         assert.equal(5, 2+3);
         assert.equal(6, 2*3);
     });
 
     test ('Proxy', function () {
-        if (typeof Proxy === 'undefined') {
-            console.log('ERROR: browser doesn\'t support Proxy, please upgrade');
-        } else if (typeof Proxy.create === 'function') {
+        assert.notEqual(typeof Proxy, 'undefined');
+
+        if (typeof process !== 'undefined' && process.versions && process.versions.node) {
             Proxy = require('harmony-proxy');
         }
 
