@@ -6,8 +6,15 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 cd "$DIR/.."
 
-python -m SimpleHTTPServer 8000 &
+set -m
 
-xdg-open "http://localhost:8000/test/runner.html"
+python -m SimpleHTTPServer 8000 &
+sleep 1
+
+if [ `uname` = Darwin ]; then
+    open "http://localhost:8000/test/runner.html"
+else
+    xdg-open "http://localhost:8000/test/runner.html"
+fi
 
 fg
