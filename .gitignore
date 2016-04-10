@@ -6,3 +6,5 @@
 /node_modules/
 /js/
 /.myth-css/
+/lib
+/test

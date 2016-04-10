@@ -8,6 +8,11 @@
 
 'use strict';
 
+import {assert} from "chai";
+import example from "../lib/example";
+import Proxy from "../lib/proxy";
+
+/*
 var assert = null;
 var example = require("../lib/example.js");
 
@@ -16,18 +21,17 @@ if (typeof require === 'function') {
 } else {
     assert = chai.assert;
 }
-
+*/
 /*
 var fs = require ('fs');
 var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
 */
 
 suite ('suite', function () {
-    /*
-    test ('version', function () {
-        assert.equal (package_json.version, '0.0.1');
-    });
-    */
+    // test ('version', function () {
+    //     assert.equal (package_json.version, '0.0.1');
+    // });
+
     test ('math', function () {
         assert.equal(5, 2+3);
         assert.equal(6, 2*3);
@@ -40,13 +44,8 @@ suite ('suite', function () {
     test ('Proxy', function () {
         assert.notEqual(typeof Proxy, 'undefined');
 
-        if (typeof process !== 'undefined' && process.versions && process.versions.node) {
-            Proxy = require('harmony-proxy');
-        }
-
         var p = new Proxy({}, { get: function (target, name) { return 23; } });
 
         assert.equal (p.doesNotExist, 23);
     });
 });
-
