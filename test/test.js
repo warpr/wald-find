@@ -9,8 +9,9 @@
 'use strict';
 
 var assert = null;
+var example = require("../lib/example.js");
 
-if (typeof require === "function") {
+if (typeof require === 'function') {
     assert = require ('chai').assert;
 } else {
     assert = chai.assert;
@@ -18,18 +19,22 @@ if (typeof require === "function") {
 
 /*
 var fs = require ('fs');
-var package_json = JSON.parse(fs.readFileSync (__dirname + "/../package.json"));
+var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
 */
 
 suite ('suite', function () {
     /*
     test ('version', function () {
-        assert.equal (package_json.version, "0.0.1");
+        assert.equal (package_json.version, '0.0.1');
     });
-*/
+    */
     test ('math', function () {
         assert.equal(5, 2+3);
         assert.equal(6, 2*3);
+    });
+
+    test ('module', function () {
+        assert.equal(example.name16("kuno"), "            kuno");
     });
 
     test ('Proxy', function () {
