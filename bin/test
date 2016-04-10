@@ -6,8 +6,8 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 cd "$DIR/.."
 
-ESLINT="node_modules/.bin/eslint lib"
-MOCHA="node_modules/mocha/bin/mocha --harmony --harmony-proxies --ui tdd --reporter spec"
+ESLINT="node_modules/.bin/eslint src"
+MOCHA="node_modules/mocha/bin/mocha --harmony --harmony-proxies --ui tdd --reporter spec lib/test"
 
 export NODE_PATH="$DIR/../lib/"
 echo node path: $NODE_PATH

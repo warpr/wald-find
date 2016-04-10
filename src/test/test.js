@@ -8,13 +8,13 @@
 
 'use strict';
 
-import {assert} from "chai";
-import example from "../lib/example";
-import Proxy from "../lib/proxy";
+import {assert} from 'chai';
+import example from '../example';
+import Proxy from '../proxy';
 
 /*
 var assert = null;
-var example = require("../lib/example.js");
+var example = require('../lib/example.js');
 
 if (typeof require === 'function') {
     assert = require ('chai').assert;
@@ -38,7 +38,7 @@ suite ('suite', function () {
     });
 
     test ('module', function () {
-        assert.equal(example.name16("kuno"), "            kuno");
+        assert.equal(example.name16('kuno'), '            kuno');
     });
 
     test ('Proxy', function () {

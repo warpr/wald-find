@@ -1,4 +1,4 @@
 #!/bin/sh
 
-node_modules/.bin/babel src --out-dir lib
-node_modules/.bin/babel test.src --out-dir test
+node_modules/.bin/babel --watch src --out-dir lib
+
