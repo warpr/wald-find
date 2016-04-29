@@ -29,7 +29,7 @@
         "react/jsx-boolean-value": 2,
         "react/jsx-no-undef": 2,
         "jsx-quotes": 2,
-        "react/jsx-sort-prop-types": 2,
+        "react/sort-prop-types": 2,
         "react/jsx-uses-react": 2,
         "react/jsx-uses-vars": 2,
         "react/no-did-mount-set-state": 2,

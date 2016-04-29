@@ -8,13 +8,40 @@
   <div id="mocha"></div>
 
   <script src="/node_modules/mocha/mocha.js"></script>
-  <script src="/node_modules/chai/chai.js"></script>
+  <script src="/node_modules/curl-amd/dist/debug/curl.js"></script>
 
-  <script>mocha.setup({ui:'tdd'})</script>
-  <script src="/test/test.js"></script>
   <script>
-    mocha.checkLeaks();
-    mocha.run();
+   mocha.setup({ui:'tdd'});
+
+   var _common_js = {
+       moduleLoader: '../node_modules/curl-amd/src/curl/loader/cjsm11.js'
+   };
+
+   var _paths = {
+       'chai': '../node_modules/chai/chai.js',
+   };
+
+   var _packages = {
+       'left-pad': {
+           location: '../node_modules/left-pad/',
+           main: 'index.js',
+           config: _common_js,
+       },
+   };
+
+   var _config = {
+       baseUrl: '/lib/',
+       debug: true,
+       paths: _paths,
+       packages: _packages,
+   };
+
+   curl(_config, ['test/test.js']).then(function () {
+       mocha.checkLeaks();
+       mocha.run();
+   }, function (err) {
+       console.log('ERROR: ', err);
+   });
   </script>
 </body>
 </html>
