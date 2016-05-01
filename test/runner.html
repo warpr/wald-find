@@ -8,14 +8,26 @@
   <div id="mocha"></div>
 
   <script src="/node_modules/mocha/mocha.js"></script>
+  <!-- if debug -->
+  <!--
   <script src="/node_modules/curl-amd/dist/debug/curl.js"></script>
+  -->
+  <!-- else -->
+  <script src="/node_modules/curl-amd/dist/curl-kitchen-sink/curl.js"></script>
+  <!-- endif -->
 
   <script>
    mocha.setup({ui:'tdd'});
+   var debug = false;
 
    var _common_js = {
-       moduleLoader: '../node_modules/curl-amd/src/curl/loader/cjsm11.js'
+       moduleLoader: 'curl/loader/cjsm11'
    };
+
+   if (debug) {
+       _common_js.moduleLoader = '../node_modules/curl-amd/src/'
+           + _common_js.moduleLoader;
+   }
 
    var _paths = {
        'chai': '../node_modules/chai/chai.js',
@@ -31,7 +43,7 @@
 
    var _config = {
        baseUrl: '/lib/',
-       debug: true,
+       debug: debug,
        paths: _paths,
        packages: _packages,
    };
