@@ -31,12 +31,18 @@
 
    var _paths = {
        'chai': '../node_modules/chai/chai.js',
+       'underscore.string': '../node_modules/underscore.string/dist/underscore.string.js',
    };
 
    var _packages = {
        'left-pad': {
            location: '../node_modules/left-pad/',
            main: 'index.js',
+           config: _common_js,
+       },
+       'n3': {
+           location: '../node_modules/n3/browser',
+           main: 'n3-browser.js',
            config: _common_js,
        },
    };
