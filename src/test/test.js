@@ -8,14 +8,44 @@
 
 'use strict';
 
-import {assert} from 'chai';
-import Proxy from '../proxy';
+import N3 from 'n3';
 import namespace from '../namespace';
+import Proxy from '../proxy';
+import query from '../query';
+import testData from './test-data';
+import {assert} from 'chai';
+import when from 'when';
 
 /*
 var fs = require ('fs');
 var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
 */
+
+// FIXME: should be a utility function somewhere
+function loadCopyleftNext () {
+    const turtle = testData['copyleft-next-0.3.0.ttl'];
+    const parser = N3.Parser ();
+    const store = N3.Store ();
+    const deferred = when.defer();
+
+    parser.parse(
+        turtle,
+        function (error, triple, prefixes) {
+            if (triple) {
+                store.addTriple(triple.subject, triple.predicate, triple.object);
+            }
+            else
+            {
+                deferred.resolve({
+                    prefixes: namespace.loadPrefixes(prefixes),
+                    store: store,
+                });
+            }
+        }
+    );
+
+    return deferred.promise;
+}
 
 suite ('wald', function () {
     // test ('version', function () {
@@ -89,6 +119,70 @@ suite ('wald', function () {
                     'dc:title': 'dublin core title',
                     'https://example.com/bogus': 'bogus key'
                 }, result);
+            });
+        });
+
+        suite ('query', function () {
+
+            test ('first', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store, prefixes} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const dc = namespace.namespaces.dc;
+
+                    let triple = wêr.first (null, dc.title, null);
+
+                    assert.equal (triple.subject, id);
+                    assert.equal (triple.predicate, dc.title);
+                    assert.equal (triple.object, N3.Util.createLiteral('copyleft-next'));
+
+                    triple = wêr.first (id, dc.title);
+
+                    assert.equal (triple.subject, id);
+                    assert.equal (triple.predicate, dc.title);
+                    assert.equal (triple.object, N3.Util.createLiteral('copyleft-next'));
+
+                    done ();
+                }, done);
+            });
+
+            test ('firstSubject', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store, prefixes} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const dc = namespace.namespaces.dc;
+
+                    let subject = wêr.firstSubject (dc.title);
+                    assert.equal (subject, id);
+
+                    subject = wêr.firstSubject (
+                        dc.title, N3.Util.createLiteral('copyleft-next'));
+                    assert.equal (subject, id);
+
+                    done ();
+                }, done);
+            });
+
+            test ('firstObject', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store, prefixes} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const dc = namespace.namespaces.dc;
+
+                    let obj = wêr.firstObject (null, dc.title);
+                    assert.equal (obj, N3.Util.createLiteral('copyleft-next'));
+
+                    obj = wêr.firstObject (id, dc.title);
+                    assert.equal (obj, N3.Util.createLiteral('copyleft-next'));
+
+                    done ();
+                }, done);
             });
         });
     });

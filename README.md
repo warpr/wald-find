@@ -1,6 +1,6 @@
 
-JavaScript import tests
-=======================
+Wêr - An RDF Query language
+===========================
 
 ...
 

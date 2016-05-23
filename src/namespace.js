@@ -9,7 +9,6 @@
 'use strict';
 
 import _s from 'underscore.string';
-import N3 from 'n3';
 import Proxy from './proxy';
 
 /**
@@ -36,8 +35,8 @@ class Namespace {
         }
     }
     qname (iri) {
-        if (_s(iri).startsWith(this.__$base)) {
-            return this.__$prefix + ':' + iri.substring(this.__$base.length);
+        if (_s (iri).startsWith (this.__$base)) {
+            return this.__$prefix + ':' + iri.substring (this.__$base.length);
         } else {
             return false;
         }
@@ -51,7 +50,7 @@ const termLookup = {
 };
 
 const prefix = function (prefix, base, terms) {
-    return new Proxy (new Namespace(prefix, base, terms), termLookup);
+    return new Proxy (new Namespace (prefix, base, terms), termLookup);
 };
 
 const owl_terms = [
@@ -101,30 +100,30 @@ const wm_terms = [
 ];
 
 const namespaces = {
-    cc:     prefix('cc',    'http://creativecommons.org/ns#',              []),
-    dc11:   prefix('dc11',  'http://purl.org/dc/elements/1.1/',            []),
-    dc:     prefix('dc',    'http://purl.org/dc/terms/',                   []),
-    foaf:   prefix('foaf',  'http://xmlns.com/foaf/0.1/',                  []),
+    cc:     prefix ('cc',    'http://creativecommons.org/ns#',              []),
+    dc11:   prefix ('dc11',  'http://purl.org/dc/elements/1.1/',            []),
+    dc:     prefix ('dc',    'http://purl.org/dc/terms/',                   []),
+    foaf:   prefix ('foaf',  'http://xmlns.com/foaf/0.1/',                  []),
     // FIXME: move to licensedb specific code
-    li:     prefix('li',    'https://licensedb.org/ns#',                   []),
-    owl:    prefix('owl',   'http://www.w3.org/2002/07/owl#',              owl_terms),
-    rdf:    prefix('rdf',   'http://www.w3.org/1999/02/22-rdf-syntax-ns#', rdf_terms),
-    rdfs:   prefix('rdfs',  'http://www.w3.org/2000/01/rdf-schema#',       rdfs_terms),
-    schema: prefix('schema','http://schema.org/',                          []),
-    spdx:   prefix('spdx',  'http://spdx.org/rdf/terms#',                  []),
-    wm:     prefix('wm',    'https://waldmeta.org/ns#',                    wm_terms),
-    xml:    prefix('xml',   'http://www.w3.org/XML/1998/namespace',        []),
-    xsd:    prefix('xsd',   'http://www.w3.org/2001/XMLSchema#',           xsd_terms),
+    li:     prefix ('li',    'https://licensedb.org/ns#',                   []),
+    owl:    prefix ('owl',   'http://www.w3.org/2002/07/owl#',              owl_terms),
+    rdf:    prefix ('rdf',   'http://www.w3.org/1999/02/22-rdf-syntax-ns#', rdf_terms),
+    rdfs:   prefix ('rdfs',  'http://www.w3.org/2000/01/rdf-schema#',       rdfs_terms),
+    schema: prefix ('schema','http://schema.org/',                          []),
+    spdx:   prefix ('spdx',  'http://spdx.org/rdf/terms#',                  []),
+    wm:     prefix ('wm',    'https://waldmeta.org/ns#',                    wm_terms),
+    xml:    prefix ('xml',   'http://www.w3.org/XML/1998/namespace',        []),
+    xsd:    prefix ('xsd',   'http://www.w3.org/2001/XMLSchema#',           xsd_terms),
 };
 
-const qname = function (iri, _prefixes) {
+function qname (iri, _prefixes) {
     if (!_prefixes) {
         _prefixes = namespaces;
     }
 
     let ret = null;
     for (let prefix in _prefixes) {
-        if (_prefixes.hasOwnProperty(prefix)) {
+        if (_prefixes.hasOwnProperty (prefix)) {
             ret = _prefixes[prefix].qname (iri);
             if (ret) {
                 break;
@@ -135,27 +134,48 @@ const qname = function (iri, _prefixes) {
     return ret ? ret : iri;
 };
 
-const shortenKeys = function shortenKeys (obj, _prefixes) {
+function shortenKeys (obj, _prefixes) {
     if (!_prefixes) {
         _prefixes = namespaces;
     }
 
-    if (Array.isArray(obj)) {
-        return obj.map((item) => shortenKeys(item, _prefixes));
+    if (Array.isArray (obj)) {
+        return obj.map ((item) => shortenKeys (item, _prefixes));
     }
 
     var ret = {};
-    Object.keys(obj).map((key) => { ret[qname(key, _prefixes)] = obj[key]; });
+    Object.keys (obj).map ((key) => { ret[qname (key, _prefixes)] = obj[key]; });
+
+    return ret;
+};
+
+function loadPrefixes (prefixes) {
+    // always use our built-in instances for these prefixes
+    const builtIn = [ 'owl', 'rdf', 'rdfs', 'wm', 'xsd' ];
+    const ret = {};
+
+    for (let key in prefixes) {
+        // FIXME: figure out why prefixes returned by N3 do not have the
+        // hasOwnProperty method and fix it.
+        if (Object.hasOwnProperty.call(prefixes, key)) {
+            if (builtIn[key]) {
+                ret[key] = namespaces[key];
+            } else {
+                ret[key] = prefix (key, prefixes[key], []);
+            }
+        }
+    }
 
     return ret;
 };
 
 module.exports = {
     a: namespaces.rdf.type,
-    prefix: prefix,
+    loadPrefixes: loadPrefixes,
     namespaces: namespaces,
-    shortenKeys: shortenKeys,
+    prefix: prefix,
     qname: qname,
+    shortenKeys: shortenKeys,
 };
 
 // -*- mode: web -*-
