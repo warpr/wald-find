@@ -8,13 +8,14 @@
 
 'use strict';
 
+import _ from 'underscore';
 import N3 from 'n3';
 import namespace from '../namespace';
 import Proxy from '../proxy';
 import query from '../query';
 import testData from './test-data';
-import {assert} from 'chai';
 import when from 'when';
+import {assert} from 'chai';
 
 /*
 var fs = require ('fs');
@@ -126,7 +127,7 @@ suite ('wald', function () {
 
             test ('first', function (done) {
                 loadCopyleftNext().then(function (result) {
-                    const {store, prefixes} = result;
+                    const {store} = result;
                     const wêr = query.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
@@ -150,7 +151,7 @@ suite ('wald', function () {
 
             test ('firstSubject', function (done) {
                 loadCopyleftNext().then(function (result) {
-                    const {store, prefixes} = result;
+                    const {store} = result;
                     const wêr = query.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
@@ -169,7 +170,7 @@ suite ('wald', function () {
 
             test ('firstObject', function (done) {
                 loadCopyleftNext().then(function (result) {
-                    const {store, prefixes} = result;
+                    const {store} = result;
                     const wêr = query.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
@@ -180,6 +181,118 @@ suite ('wald', function () {
 
                     obj = wêr.firstObject (id, dc.title);
                     assert.equal (obj, N3.Util.createLiteral('copyleft-next'));
+
+                    done ();
+                }, done);
+            });
+
+            test ('all', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const cc = namespace.namespaces.cc;
+
+                    const triples = wêr.all (id, cc.permits);
+                    assert.equal (triples.length, 3);
+
+                    const sorted = _(triples).sortBy('object');
+                    assert.equal (sorted[0].object, cc.DerivativeWorks);
+                    assert.equal (sorted[1].object, cc.Distribution);
+                    assert.equal (sorted[2].object, cc.Reproduction);
+
+                    done ();
+                }, done);
+            });
+
+            test ('allSubjects', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const cc = namespace.namespaces.cc;
+
+                    const subjects = wêr.allSubjects (namespace.a, cc.License);
+                    assert.equal (subjects.length, 1);
+
+                    assert.equal (subjects[0], id);
+
+                    done ();
+                }, done);
+            });
+
+            test ('allObjects', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const cc = namespace.namespaces.cc;
+
+                    const objs = wêr.allObjects (id, cc.permits);
+                    assert.equal (objs.length, 3);
+
+                    objs.sort();
+                    assert.equal (objs[0], cc.DerivativeWorks);
+                    assert.equal (objs[1], cc.Distribution);
+                    assert.equal (objs[2], cc.Reproduction);
+
+                    done ();
+                }, done);
+            });
+
+            test ('allPredicatesObjects', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store, prefixes} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const dc = prefixes.dc;
+                    const li = prefixes.li;
+
+
+                    let model = wêr.allPredicatesObjects (id);
+                    assert.equal (_(model).keys().length, 12);
+
+                    assert.equal (model[dc.hasVersion][0], '"0.3.0"');
+                    assert.equal (model[dc.identifier][0], '"copyleft-next"');
+                    assert.equal (model[li.name][0], '"copyleft-next 0.3.0"');
+
+                    model = namespace.shortenKeys(model);
+
+                    assert.equal (model['dc:hasVersion'][0], '"0.3.0"');
+                    assert.equal (model['dc:identifier'][0], '"copyleft-next"');
+                    assert.equal (model['li:name'][0], '"copyleft-next 0.3.0"');
+
+                    done ();
+                }, done);
+            });
+
+            test ('firstValues', function (done) {
+                loadCopyleftNext().then(function (result) {
+                    const {store, prefixes} = result;
+                    const wêr = query.factory(store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const dc = prefixes.dc;
+                    const li = prefixes.li;
+
+                    let model = wêr.allPredicatesObjects (id);
+                    assert.equal (_(model).keys().length, 12);
+
+                    model = wêr.firstValues(model);
+
+                    assert.equal (model[dc.hasVersion], '"0.3.0"');
+                    assert.equal (model[dc.identifier], '"copyleft-next"');
+                    assert.equal (model[li.name], '"copyleft-next 0.3.0"');
+
+                    model = namespace.shortenKeys(model);
+
+                    assert.equal (model['dc:hasVersion'], '"0.3.0"');
+                    assert.equal (model['dc:identifier'], '"copyleft-next"');
+                    assert.equal (model['li:name'], '"copyleft-next 0.3.0"');
 
                     done ();
                 }, done);

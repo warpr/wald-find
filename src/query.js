@@ -36,42 +36,42 @@ class Query {
         return results.length > 0 ? results[0].object : rdf.nil;
     }
 
-        all (subject, predicate, object) {
-            return this.store.find (subject, predicate, object);
-        }
+    all (subject, predicate, object) {
+        return this.store.find (subject, predicate, object);
+    }
 
-        allSubjects (predicate, object) {
-            return this.store.find (null, predicate, object).map((result) => result.subject);
-        }
+    allSubjects (predicate, object) {
+        return this.store.find (null, predicate, object).map((result) => result.subject);
+    }
 
-        allObjects (subject, predicate) {
-            return this.store.find (subject, predicate, null).map((result) => result.object);
-        }
+    allObjects (subject, predicate) {
+        return this.store.find (subject, predicate, null).map((result) => result.object);
+    }
 
-        allPredicatesObjects (subject) {
-            var ret = {}
-            this.store.find (subject, null, null).map((result) => {
-                if (!ret.hasOwnProperty(result.predicate)) {
-                    ret[result.predicate] = [];
-                }
-
-                ret[result.predicate].push(result.object);
-            });
-            return ret;
-        }
-
-        firstValues (obj) {
-            var ret = {};
-            for (var p in obj) {
-                if (obj.hasOwnProperty(p) && obj[p].length > 0) {
-                    ret[p] = obj[p][0];
-                } else {
-                    ret[p] = obj[p];
-                }
+    allPredicatesObjects (subject) {
+        var ret = {}
+        this.store.find (subject, null, null).map((result) => {
+            if (!ret.hasOwnProperty(result.predicate)) {
+                ret[result.predicate] = [];
             }
 
-            return ret;
+            ret[result.predicate].push(result.object);
+        });
+        return ret;
+    }
+
+    firstValues (obj) {
+        var ret = {};
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p) && obj[p].length > 0) {
+                ret[p] = obj[p][0];
+            } else {
+                ret[p] = obj[p];
+            }
         }
+
+        return ret;
+    }
 }
 
 const factory = function (datastore) {
