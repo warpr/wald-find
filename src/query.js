@@ -59,19 +59,6 @@ class Query {
         });
         return ret;
     }
-
-    firstValues (obj) {
-        var ret = {};
-        for (var p in obj) {
-            if (obj.hasOwnProperty(p) && obj[p].length > 0) {
-                ret[p] = obj[p][0];
-            } else {
-                ret[p] = obj[p];
-            }
-        }
-
-        return ret;
-    }
 }
 
 const factory = function (datastore) {

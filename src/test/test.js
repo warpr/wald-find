@@ -10,10 +10,9 @@
 
 import _ from 'underscore';
 import N3 from 'n3';
-import namespace from '../namespace';
 import Proxy from '../proxy';
-import query from '../query';
 import testData from './test-data';
+import wêr from '../wer';
 import when from 'when';
 import {assert} from 'chai';
 
@@ -38,7 +37,7 @@ function loadCopyleftNext () {
             else
             {
                 deferred.resolve({
-                    prefixes: namespace.loadPrefixes(prefixes),
+                    prefixes: wêr.loadPrefixes(prefixes),
                     store: store,
                 });
             }
@@ -66,9 +65,9 @@ suite ('wald', function () {
     suite ('wêr', function () {
         suite ('namespaces', function () {
             test ('common terms', function () {
-                const ns = namespace.namespaces;
+                const ns = wêr.namespaces;
 
-                assert.equal (namespace.a, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+                assert.equal (wêr.a, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
                 assert.equal (ns.rdf.type, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
                 assert.equal (ns.owl.sameAs, 'http://www.w3.org/2002/07/owl#sameAs');
                 assert.equal (ns.rdfs.comment, 'http://www.w3.org/2000/01/rdf-schema#comment');
@@ -80,7 +79,7 @@ suite ('wald', function () {
             test ('prefix', function () {
                 var aap_terms = [ 'noot', 'mies' ];
 
-                var aap = namespace.prefix('aap', 'https://example.org/aap/', aap_terms);
+                var aap = wêr.prefix('aap', 'https://example.org/aap/', aap_terms);
 
                 assert.equal (aap.noot, 'https://example.org/aap/noot');
                 assert.equal (aap.mies, 'https://example.org/aap/mies');
@@ -93,15 +92,15 @@ suite ('wald', function () {
 
             test ('qname', function () {
                 assert.equal (
-                    namespace.qname('http://www.w3.org/2002/07/owl#sameAs'),
+                    wêr.qname('http://www.w3.org/2002/07/owl#sameAs'),
                     'owl:sameAs'
                 );
                 assert.equal (
-                    namespace.qname('http://purl.org/dc/terms/title'),
+                    wêr.qname('http://purl.org/dc/terms/title'),
                     'dc:title'
                 );
                 assert.equal (
-                    namespace.qname('https://example.com/does/not/exist'),
+                    wêr.qname('https://example.com/does/not/exist'),
                     'https://example.com/does/not/exist'
                 );
             });
@@ -113,7 +112,7 @@ suite ('wald', function () {
                     'https://example.com/bogus': 'bogus key',
                 }
 
-                const result = namespace.shortenKeys(data);
+                const result = wêr.shortenKeys(data);
 
                 assert.deepEqual({
                     'owl:sameAs': 'sameAs goes here',
@@ -128,18 +127,18 @@ suite ('wald', function () {
             test ('first', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = namespace.namespaces.dc;
+                    const dc = wêr.namespaces.dc;
 
-                    let triple = wêr.first (null, dc.title, null);
+                    let triple = w.first (null, dc.title, null);
 
                     assert.equal (triple.subject, id);
                     assert.equal (triple.predicate, dc.title);
                     assert.equal (triple.object, N3.Util.createLiteral('copyleft-next'));
 
-                    triple = wêr.first (id, dc.title);
+                    triple = w.first (id, dc.title);
 
                     assert.equal (triple.subject, id);
                     assert.equal (triple.predicate, dc.title);
@@ -152,15 +151,15 @@ suite ('wald', function () {
             test ('firstSubject', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = namespace.namespaces.dc;
+                    const dc = wêr.namespaces.dc;
 
-                    let subject = wêr.firstSubject (dc.title);
+                    let subject = w.firstSubject (dc.title);
                     assert.equal (subject, id);
 
-                    subject = wêr.firstSubject (
+                    subject = w.firstSubject (
                         dc.title, N3.Util.createLiteral('copyleft-next'));
                     assert.equal (subject, id);
 
@@ -171,15 +170,15 @@ suite ('wald', function () {
             test ('firstObject', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = namespace.namespaces.dc;
+                    const dc = wêr.namespaces.dc;
 
-                    let obj = wêr.firstObject (null, dc.title);
+                    let obj = w.firstObject (null, dc.title);
                     assert.equal (obj, N3.Util.createLiteral('copyleft-next'));
 
-                    obj = wêr.firstObject (id, dc.title);
+                    obj = w.firstObject (id, dc.title);
                     assert.equal (obj, N3.Util.createLiteral('copyleft-next'));
 
                     done ();
@@ -189,12 +188,12 @@ suite ('wald', function () {
             test ('all', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = namespace.namespaces.cc;
+                    const cc = wêr.namespaces.cc;
 
-                    const triples = wêr.all (id, cc.permits);
+                    const triples = w.all (id, cc.permits);
                     assert.equal (triples.length, 3);
 
                     const sorted = _(triples).sortBy('object');
@@ -209,12 +208,12 @@ suite ('wald', function () {
             test ('allSubjects', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = namespace.namespaces.cc;
+                    const cc = wêr.namespaces.cc;
 
-                    const subjects = wêr.allSubjects (namespace.a, cc.License);
+                    const subjects = w.allSubjects (wêr.a, cc.License);
                     assert.equal (subjects.length, 1);
 
                     assert.equal (subjects[0], id);
@@ -226,12 +225,12 @@ suite ('wald', function () {
             test ('allObjects', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = namespace.namespaces.cc;
+                    const cc = wêr.namespaces.cc;
 
-                    const objs = wêr.allObjects (id, cc.permits);
+                    const objs = w.allObjects (id, cc.permits);
                     assert.equal (objs.length, 3);
 
                     objs.sort();
@@ -246,21 +245,21 @@ suite ('wald', function () {
             test ('allPredicatesObjects', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store, prefixes} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
                     const dc = prefixes.dc;
                     const li = prefixes.li;
 
 
-                    let model = wêr.allPredicatesObjects (id);
+                    let model = w.allPredicatesObjects (id);
                     assert.equal (_(model).keys().length, 12);
 
                     assert.equal (model[dc.hasVersion][0], '"0.3.0"');
                     assert.equal (model[dc.identifier][0], '"copyleft-next"');
                     assert.equal (model[li.name][0], '"copyleft-next 0.3.0"');
 
-                    model = namespace.shortenKeys(model);
+                    model = wêr.shortenKeys(model);
 
                     assert.equal (model['dc:hasVersion'][0], '"0.3.0"');
                     assert.equal (model['dc:identifier'][0], '"copyleft-next"');
@@ -273,13 +272,13 @@ suite ('wald', function () {
             test ('firstValues', function (done) {
                 loadCopyleftNext().then(function (result) {
                     const {store, prefixes} = result;
-                    const wêr = query.factory(store);
+                    const w = wêr.factory(store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
                     const dc = prefixes.dc;
                     const li = prefixes.li;
 
-                    let model = wêr.allPredicatesObjects (id);
+                    let model = w.allPredicatesObjects (id);
                     assert.equal (_(model).keys().length, 12);
 
                     model = wêr.firstValues(model);
@@ -288,7 +287,7 @@ suite ('wald', function () {
                     assert.equal (model[dc.identifier], '"copyleft-next"');
                     assert.equal (model[li.name], '"copyleft-next 0.3.0"');
 
-                    model = namespace.shortenKeys(model);
+                    model = wêr.shortenKeys(model);
 
                     assert.equal (model['dc:hasVersion'], '"0.3.0"');
                     assert.equal (model['dc:identifier'], '"copyleft-next"');
