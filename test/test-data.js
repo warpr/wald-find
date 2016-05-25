@@ -10,8 +10,21 @@
 
 /* eslint  quotes:0  max-len:0 */
 
-module.exports = {
-    "copyleft-next-0.3.0.ttl": `
+'use strict';
+
+(function (factory) {
+    const imports = ['require'];
+
+    if (typeof define === 'function' && define.amd) {
+        define (imports, factory);
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = factory (require);
+    } else {
+        console.log ('Module system not recognized, please use AMD or CommonJS');
+    }
+}(function (require) {
+    return {
+        "copyleft-next-0.3.0.ttl": `
 @prefix cc: <http://creativecommons.org/ns#> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix dc11: <http://purl.org/dc/elements/1.1/> .
@@ -49,3 +62,7 @@ module.exports = {
     `
 };
 
+}));
+
+// -*- mode: web -*-
+// -*- engine: jsx -*-
