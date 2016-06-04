@@ -1,6 +1,6 @@
 
-Wêr - An RDF Query language
-===========================
+Wêr - A library for querying RDF
+================================
 
 ...
 

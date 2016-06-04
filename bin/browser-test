@@ -8,13 +8,13 @@ cd "$DIR/.."
 
 set -m
 
-python -m SimpleHTTPServer 8000 &
+python -m SimpleHTTPServer 8463 &
 sleep 1
 
 if [ `uname` = Darwin ]; then
-    open "http://localhost:8000/test/runner.html"
+    open "http://localhost:8463/test/runner.html"
 else
-    xdg-open "http://localhost:8000/test/runner.html"
+    xdg-open "http://localhost:8463/test/runner.html"
 fi
 
 fg
