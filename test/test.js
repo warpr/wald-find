@@ -12,6 +12,7 @@
     const imports = [
         'require',
         'chai',
+        'httpinvoke',
         'n3',
         'underscore',
         'when',
@@ -30,16 +31,14 @@
 }(function (require) {
     const _ = require ('underscore');
     const assert = require ('chai').assert;
+    const httpinvoke = require ('httpinvoke');
     const N3 = require ('n3');
     const Proxy = require ('../lib/proxy');
     const testData = require ('./test-data');
     const when = require ('when');
     const wêr = require ('../lib/wer');
 
-/*
-var fs = require ('fs');
-var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
-*/
+    const SLOW_TESTS = false;
 
     // FIXME: should be a utility function somewhere
     function loadCopyleftNext () {
@@ -75,6 +74,19 @@ var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
 
             assert.equal (p.doesNotExist, 23);
         });
+
+        if (SLOW_TESTS) {
+            test ('httpinvoke', function (done) {
+                return when (httpinvoke ('http://httpstat.us/200', 'GET'))
+                    .then (function (data) {
+                        assert.equal (data.statusCode, 200);
+                        assert.equal (data.body, '200 OK');
+                        done ();
+                    });
+            });
+        } else {
+            test ('httpinvoke SKIPPED', function () {});
+        }
     });
 
     suite ('wêr', function () {
@@ -316,8 +328,24 @@ var package_json = JSON.parse(fs.readFileSync (__dirname + '/../package.json'));
                 }, done);
             });
         });
+
+        suite ('tools', function () {
+            test ('loadTurtle', function (done) {
+                const turtlePath = '../test/data/copyleft-next-0.3.0.ttl';
+
+                return wêr.tools.loadTurtle (turtlePath).then (function (datastore) {
+                    const ids = datastore.find(
+                        'https://licensedb.org/id/copyleft-next-0.3.0',
+                        'http://purl.org/dc/terms/identifier',
+                        null
+                    );
+
+                    assert.equal (ids[0].object, '"copyleft-next"');
+                    done ();
+                });
+            });
+        });
     });
 }));
 
-// -*- mode: web -*-
-// -*- engine: jsx -*-
+// -*- mode: javascript-mode -*-

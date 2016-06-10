@@ -1,25 +1,26 @@
 {
-    "name": "wer",
-    "version": "0.0.2",
-    "description": "Wêr - A library for querying RDF",
-    "main": "lib/wer.js",
-    "scripts": {
-        "test": "bin/test"
-    },
-    "author": "Kuno Woudt <kuno@frob.nl>",
-    "license": "copyleft-next-0.3.0",
-    "repository": "https://gitlab.com/wald-meta/wer.git",
-    "dependencies": {
-        "chai": "^3.5.0",
-        "curl-amd": "^0.8.12",
-        "eslint": "^2.7.0",
-        "eslint-plugin-react": "^4.3.0",
-        "harmony-proxy": "^1.0.0",
-        "left-pad": "^1.0.1",
-        "mocha": "^2.4.5",
-        "n3": "^0.4.5",
-        "underscore": "^1.8.3",
-        "underscore.string": "^3.3.4",
-        "when": "^3.7.7"
-    }
+  "name": "wer",
+  "version": "0.0.2",
+  "description": "Wêr - A library for querying RDF",
+  "main": "lib/wer.js",
+  "scripts": {
+    "test": "bin/test"
+  },
+  "author": "Kuno Woudt <kuno@frob.nl>",
+  "license": "copyleft-next-0.3.0",
+  "repository": "https://gitlab.com/wald-meta/wer.git",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "curl-amd": "^0.8.12",
+    "eslint": "^2.7.0",
+    "eslint-plugin-react": "^4.3.0",
+    "harmony-proxy": "^1.0.0",
+    "httpinvoke": "^1.4.0",
+    "left-pad": "^1.0.1",
+    "mocha": "^2.4.5",
+    "n3": "^0.4.5",
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4",
+    "when": "^3.7.7"
+  }
 }
