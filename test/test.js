@@ -38,7 +38,7 @@
     const when = require ('when');
     const wêr = require ('../lib/wer');
 
-    const REMOTE_TESTS = true;
+    const REMOTE_TESTS = false;
 
     // FIXME: should be a utility function somewhere
     function loadCopyleftNext () {
