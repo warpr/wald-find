@@ -8,6 +8,8 @@
 
 'use strict';
 
+const NODE_JS = typeof process !== 'undefined' && process.versions && process.versions.node;
+
 (function (factory) {
     const imports = [
         'require',
@@ -38,7 +40,7 @@
     const when = require ('when');
     const wêr = require ('../lib/wer');
 
-    const REMOTE_TESTS = false;
+    const REMOTE_TESTS = true;
 
     // FIXME: should be a utility function somewhere
     function loadCopyleftNext () {
@@ -330,6 +332,30 @@
         });
 
         suite ('tools', function () {
+
+            if (NODE_JS && REMOTE_TESTS) {
+                // currently this test doesn't work in the browser due to CORS configuration
+                // issues at licensedb.org
+                test ('loadFragments', function (done) {
+                    const server = 'https://licensedb.org/data/licensedb';
+                    const subject = 'https://licensedb.org/id/copyleft-next-0.3.0';
+
+                    return wêr.tools.loadFragments (server, subject)
+                        .then (function (datastore) {
+                            const ids = datastore.find(
+                                'https://licensedb.org/id/copyleft-next-0.3.0',
+                                'http://purl.org/dc/terms/identifier',
+                                null
+                            );
+
+                            assert.equal (ids[0].object, '"copyleft-next"');
+                            done ();
+                        });
+                });
+            } else {
+                test ('loadFragments SKIPPED', function () {});
+            }
+
             test ('loadTurtle', function (done) {
                 const turtlePath = '../test/data/copyleft-next-0.3.0.ttl';
 
