@@ -38,7 +38,7 @@
     const when = require ('when');
     const wêr = require ('../lib/wer');
 
-    const SLOW_TESTS = false;
+    const REMOTE_TESTS = true;
 
     // FIXME: should be a utility function somewhere
     function loadCopyleftNext () {
@@ -75,7 +75,7 @@
             assert.equal (p.doesNotExist, 23);
         });
 
-        if (SLOW_TESTS) {
+        if (REMOTE_TESTS) {
             test ('httpinvoke', function (done) {
                 return when (httpinvoke ('http://httpstat.us/200', 'GET'))
                     .then (function (data) {
@@ -334,6 +334,21 @@
                 const turtlePath = '../test/data/copyleft-next-0.3.0.ttl';
 
                 return wêr.tools.loadTurtle (turtlePath).then (function (datastore) {
+                    const ids = datastore.find(
+                        'https://licensedb.org/id/copyleft-next-0.3.0',
+                        'http://purl.org/dc/terms/identifier',
+                        null
+                    );
+
+                    assert.equal (ids[0].object, '"copyleft-next"');
+                    done ();
+                });
+            });
+
+            test ('loadJsonLD', function (done) {
+                const jsonldPath = '../test/data/copyleft-next-0.3.0.jsonld';
+
+                return wêr.tools.loadJsonLD (jsonldPath).then (function (datastore) {
                     const ids = datastore.find(
                         'https://licensedb.org/id/copyleft-next-0.3.0',
                         'http://purl.org/dc/terms/identifier',
