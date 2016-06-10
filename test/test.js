@@ -8,8 +8,6 @@
 
 'use strict';
 
-const NODE_JS = typeof process !== 'undefined' && process.versions && process.versions.node;
-
 (function (factory) {
     const imports = [
         'require',
@@ -41,6 +39,7 @@ const NODE_JS = typeof process !== 'undefined' && process.versions && process.ve
     const wêr = require ('../lib/wer');
 
     const REMOTE_TESTS = true;
+    const NODE_JS = typeof process !== 'undefined' && process.versions && process.versions.node;
 
     // FIXME: should be a utility function somewhere
     function loadCopyleftNext () {
