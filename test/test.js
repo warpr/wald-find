@@ -28,21 +28,21 @@
     } else {
         console.log ('Module system not recognized, please use AMD or CommonJS');
     }
-}(function (require) {
-    const _ = require ('underscore');
+} (function (require) {
     const assert = require ('chai').assert;
     const httpinvoke = require ('httpinvoke');
     const N3 = require ('n3');
     const Proxy = require ('../lib/proxy');
     const testData = require ('./test-data');
+    const underscore = require ('underscore');
     const when = require ('when');
     const wêr = require ('../lib/wer');
 
-    const REMOTE_TESTS = true;
+    const REMOTE_TESTS = false;
 
     // FIXME: should be a utility function somewhere
-    function loadCopyleftNext () {
-        const turtle = testData['copyleft-next-0.3.0.ttl'];
+    function loadTestData (key) {
+        const turtle = testData[key];
         const parser = N3.Parser ();
         const store = N3.Store ();
         const deferred = when.defer ();
@@ -64,6 +64,14 @@
         );
 
         return deferred.promise;
+    }
+
+    function loadCopyleftNext () {
+        return loadTestData ('copyleft-next-0.3.0.ttl');
+    }
+
+    function loadLicenseForm () {
+        return loadTestData ('license-form.ttl');
     }
 
     suite ('prerequisites', function () {
@@ -225,7 +233,7 @@
                     const triples = w.all (id, cc.permits);
                     assert.equal (triples.length, 3);
 
-                    const sorted = _(triples).sortBy ('object');
+                    const sorted = underscore (triples).sortBy ('object');
                     assert.equal (sorted[0].object, cc.DerivativeWorks);
                     assert.equal (sorted[1].object, cc.Distribution);
                     assert.equal (sorted[2].object, cc.Reproduction);
@@ -283,7 +291,7 @@
 
 
                     let model = w.allPredicatesObjects (id);
-                    assert.equal (_(model).keys ().length, 12);
+                    assert.equal (underscore (model).keys ().length, 12);
 
                     assert.equal (model[dc.hasVersion][0], '"0.3.0"');
                     assert.equal (model[dc.identifier][0], '"copyleft-next"');
@@ -310,7 +318,7 @@
                     const li = prefixes.li;
 
                     let model = w.allPredicatesObjects (id);
-                    assert.equal (_(model).keys ().length, 12);
+                    assert.equal (underscore (model).keys ().length, 12);
 
                     model = wêr.firstValues (model);
 
@@ -327,6 +335,38 @@
                     done ();
                 }, done);
             });
+
+            test ('list', function (done) {
+                loadLicenseForm ().then (function (result) {
+                    const store = result.store;
+                    const prefixes = result.prefixes;
+                    const w = wêr.factory (store);
+                    const formId = 'https://example.org/license-form.ttl';
+
+                    const dc = prefixes.dc;
+                    const foaf = prefixes.foaf;
+                    const li = prefixes.li;
+                    const rdf = prefixes.rdf;
+                    const wm = prefixes.wm;
+
+                    const list = w.firstObject (formId, wm.fields);
+                    const head = w.allPredicatesObjects (list);
+
+                    assert.property (head, rdf.first);
+                    assert.property (head, rdf.rest);
+
+                    const items = w.list (list);
+
+                    assert.equal (items.length, 5);
+                    assert.equal (w.firstObject (items[0], wm.predicate), li.id);
+                    assert.equal (w.firstObject (items[1], wm.predicate), dc.title);
+                    assert.equal (w.firstObject (items[2], wm.predicate), dc.hasVersion);
+                    assert.equal (w.firstObject (items[3], wm.predicate), foaf.logo);
+                    assert.equal (w.firstObject (items[4], wm.predicate), dc.subject);
+
+                    done ();
+                }, done);
+            });
         });
 
         suite ('tools', function () {
@@ -338,7 +378,7 @@
 
                     return wêr.tools.loadFragments (server, subject)
                         .then (function (datastore) {
-                            const ids = datastore.find(
+                            const ids = datastore.find (
                                 'https://licensedb.org/id/copyleft-next-0.3.0',
                                 'http://purl.org/dc/terms/identifier',
                                 null
@@ -356,7 +396,7 @@
                 const turtlePath = '../test/data/copyleft-next-0.3.0.ttl';
 
                 return wêr.tools.loadTurtle (turtlePath).then (function (datastore) {
-                    const ids = datastore.find(
+                    const ids = datastore.find (
                         'https://licensedb.org/id/copyleft-next-0.3.0',
                         'http://purl.org/dc/terms/identifier',
                         null
@@ -371,7 +411,7 @@
                 const jsonldPath = '../test/data/copyleft-next-0.3.0.jsonld';
 
                 return wêr.tools.loadJsonLD (jsonldPath).then (function (datastore) {
-                    const ids = datastore.find(
+                    const ids = datastore.find (
                         'https://licensedb.org/id/copyleft-next-0.3.0',
                         'http://purl.org/dc/terms/identifier',
                         null

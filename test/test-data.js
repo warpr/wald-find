@@ -22,8 +22,55 @@
     } else {
         console.log ('Module system not recognized, please use AMD or CommonJS');
     }
-}(function (require) {
+} (function (require) {
     return {
+        "license-form.ttl": `
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix li: <https://licensedb.org/ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix spdx: <http://spdx.org/rdf/terms#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix wm: <https://waldmeta.org/ns#> .
+
+<https://example.org/license-form.ttl> a wm:Form ;
+    dc:title "License Edit Form" ;
+    wm:fields (
+        [ a wm:Field; wm:predicate li:id; wm:minSize 2; ]
+        [ a wm:Field; wm:predicate dc:title; wm:minSize 2; wm:stretchSize 4; ]
+        [ a wm:Field; wm:predicate dc:hasVersion; ]
+        [ a wm:Field; wm:predicate foaf:logo; wm:minSize 3; wm:stretchSize 4; ]
+        [ a wm:Field; wm:predicate dc:subject; wm:minSize 2; wm:stretchSize 3; ]
+    ) .
+
+li:id rdfs:range xsd:string, [
+    a owl:Restriction;
+    owl:onProperty li:id;
+    owl:maxCardinality 1;
+    owl:minCardinality 1;
+].
+
+dc:title rdfs:range rdfs:Literal, [
+    a owl:Restriction;
+    owl:onProperty dc:title;
+    owl:minCardinality 1;
+].
+
+dc:hasVersion rdfs:range xsd:string, [
+    a owl:Restriction;
+    owl:onProperty dc:hasVersion;
+    owl:maxCardinality 1;
+].
+
+foaf:logo rdfs:range foaf:Image.
+dc:subject rdfs:range rdfs:Resource.
+`,
         "copyleft-next-0.3.0.ttl": `
 @prefix cc: <http://creativecommons.org/ns#> .
 @prefix dc: <http://purl.org/dc/terms/> .
