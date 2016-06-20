@@ -371,6 +371,45 @@
 
         suite ('tools', function () {
 
+            test ('integer', function () {
+                const twentyone = wêr.tools.integer ('"21"');
+                assert.equal (twentyone, 21);
+
+                const twentytwo = wêr.tools.integer ('"22.9"');
+                assert.equal (twentytwo, 22);
+
+                const twentythree = wêr.tools.integer (
+                    '"23"^^http://www.w3.org/2001/XMLSchema#integer');
+                assert.equal (twentythree, 23);
+
+                const twentyfour = wêr.tools.integer ('"Twenty-four"@en-gb');
+                assert.equal (twentyfour, null);
+
+                const twentyfive = wêr.tools.integer ('https://example.com/25');
+                assert.equal (twentyfive, null);
+
+                const twentysix = wêr.tools.integer ('_:b26');
+                assert.equal (twentysix, null);
+
+                const twentyseven = wêr.tools.integer (
+                    '"27"^^http://www.w3.org/2001/XMLSchema#int');
+                assert.equal (twentyseven, 27);
+
+                const twentyeight = wêr.tools.integer (
+                    '"28"^^http://www.w3.org/2001/XMLSchema#long');
+                assert.equal (twentyeight, 28);
+
+                const twentynine = wêr.tools.integer (
+                    '"29.9"^^http://www.w3.org/2001/XMLSchema#float');
+                assert.equal (twentynine, 29);
+
+                const thirty = wêr.tools.integer ('"0x30"');
+                assert.equal (thirty, 0); // actually we don't support hex notation, so 0
+
+                const thirtyone = wêr.tools.integer ('"031"');
+                assert.equal (thirtyone, 31);
+            });
+
             if (REMOTE_TESTS) {
                 test ('loadFragments', function (done) {
                     const server = 'https://licensedb.org/data/licensedb';
