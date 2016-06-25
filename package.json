@@ -1,6 +1,6 @@
 {
-  "name": "find",
-  "version": "0.0.3",
+  "name": "wald-find",
+  "version": "1.0.0",
   "description": "wald:find - A library for querying RDF",
   "main": "lib/find.js",
   "scripts": {
