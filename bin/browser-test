@@ -11,10 +11,16 @@ set -m
 python -m SimpleHTTPServer 8463 &
 sleep 1
 
+URI="http://localhost:8463/test/runner.html"
+
+if [ -n "$WALD_FIND_REMOTE_TESTS" ]; then
+    URI="$URI?WALD_FIND_REMOTE_TESTS=$WALD_FIND_REMOTE_TESTS"
+fi
+
 if [ `uname` = Darwin ]; then
-    open "http://localhost:8463/test/runner.html"
+    open "$URI"
 else
-    xdg-open "http://localhost:8463/test/runner.html"
+    xdg-open "$URI"
 fi
 
 fg

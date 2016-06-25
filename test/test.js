@@ -38,7 +38,17 @@
     const when = require ('when');
     const find = require ('../lib/find');
 
-    const REMOTE_TESTS = false;
+    let REMOTE_TESTS = false;
+
+    if (typeof process !== 'undefined' && process.env.WALD_FIND_REMOTE_TESTS) {
+        REMOTE_TESTS = true;
+    }
+
+    if (typeof window !== 'undefined' && window.location) {
+        if (new RegExp ('WALD_FIND_REMOTE_TESTS').test (window.location.search)) {
+            REMOTE_TESTS = true;
+        }
+    }
 
     // FIXME: should be a utility function somewhere
     function loadTestData (key) {
