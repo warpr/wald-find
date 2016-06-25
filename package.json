@@ -7,7 +7,7 @@
     "test": "bin/test"
   },
   "author": "Kuno Woudt <kuno@frob.nl>",
-  "license": "copyleft-next-0.3.0",
+  "license": "copyleft-next-0.3.1",
   "repository": "https://gitlab.com/wald-meta/wer.git",
   "dependencies": {
     "chai": "^3.5.0",
