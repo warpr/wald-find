@@ -1,14 +1,14 @@
 {
-  "name": "wer",
-  "version": "0.0.2",
-  "description": "Wêr - A library for querying RDF",
+  "name": "find",
+  "version": "0.0.3",
+  "description": "wald:find - A library for querying RDF",
   "main": "lib/wer.js",
   "scripts": {
     "test": "bin/test"
   },
   "author": "Kuno Woudt <kuno@frob.nl>",
   "license": "copyleft-next-0.3.1",
-  "repository": "https://gitlab.com/wald-meta/wer.git",
+  "repository": "https://gitlab.com/wald-meta/find.git",
   "dependencies": {
     "chai": "^3.5.0",
     "curl-amd": "^0.8.12",
