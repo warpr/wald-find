@@ -1,8 +1,12 @@
 
-Wêr - A library for querying RDF
-================================
+wald:find - A library for querying RDF
+======================================
 
-...
+wald:find is part of wald:meta.
+
+wald:meta is vaporware.
+
+wald:meta will be a generic metadata database for linked data.
 
 
 License
