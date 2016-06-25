@@ -2,7 +2,7 @@
   "name": "find",
   "version": "0.0.3",
   "description": "wald:find - A library for querying RDF",
-  "main": "lib/wer.js",
+  "main": "lib/find.js",
   "scripts": {
     "test": "bin/test"
   },

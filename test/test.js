@@ -17,7 +17,7 @@
         'underscore',
         'when',
         '../lib/proxy',
-        '../lib/wer',
+        '../lib/find',
         './test-data',
     ];
 
@@ -36,7 +36,7 @@
     const testData = require ('./test-data');
     const underscore = require ('underscore');
     const when = require ('when');
-    const find = require ('../lib/wer');
+    const find = require ('../lib/find');
 
     const REMOTE_TESTS = false;
 
