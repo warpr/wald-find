@@ -16,7 +16,6 @@
     "harmony-proxy": "^1.0.0",
     "httpinvoke": "^1.4.0",
     "jsonld": "^0.4.11",
-    "left-pad": "^1.0.1",
     "mocha": "^2.4.5",
     "n3": "^0.4.5",
     "underscore": "^1.8.3",
