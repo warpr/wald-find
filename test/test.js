@@ -108,10 +108,6 @@
     });
 
     suite ('find', function () {
-    //     // test ('version', function () {
-    //     //     assert.equal (package_json.version, '0.0.1');
-    //     // });
-
         suite ('namespaces', function () {
             test ('common terms', function () {
                 const ns = find.namespaces;
@@ -469,6 +465,45 @@
                     assert.equal (ids[0].object, '"copyleft-next"');
                     done ();
                 });
+            });
+
+            test ('replaceId', function () {
+                const store = N3.Store ();
+                const a = find.a;
+
+                const foaf = find.namespaces.foaf;
+                const owl = find.namespaces.owl;
+                const rdf = find.namespaces.rdf;
+                const schema = find.namespaces.schema;
+
+                const mbid = 'http://musicbrainz.org/artist/'
+                    + '455641ea-fff4-49f6-8fb4-49f961d8f1ac';
+
+                store.addTriple ('_:b100', a, schema.MusicGroup);
+                store.addTriple (mbid, owl.sameAs, '_:b100');
+                store.addTriple ('_:b100', foaf.name, '倖田來未');
+                store.addTriple ('https://b.nl/200', a, rdf.Statement);
+                store.addTriple ('https://b.nl/200', rdf.subject, '_:b100');
+
+                const w = find.factory (store);
+
+                // test replacement in predicate position
+                find.tools.replaceId (foaf.name, schema.name, store);
+                assert.equal (0, w.all ('_:b100', foaf.name, '倖田來未').length);
+                assert.equal (1, w.all ('_:b100', schema.name, '倖田來未').length);
+
+                // test replacement in subject and object position
+                find.tools.replaceId ('_:b100', 'https://b.nl/100', store);
+                find.tools.replaceId ('https://b.nl/200', '_:b200', store);
+                assert.equal (0, w.all ('_:b100', foaf.name, '倖田來未').length);
+                assert.equal (0, w.all ('_:b100', schema.name, '倖田來未').length);
+                assert.equal (1, w.all ('https://b.nl/100', schema.name, '倖田來未').length);
+
+                assert.equal (0, w.all ('https://b.nl/200', rdf.subject, '_:b100').length);
+                assert.equal (1, w.all ('_:b200', rdf.subject, 'https://b.nl/100').length);
+
+                assert.equal (0, w.all (mbid, owl.sameAs, '_:b100').length);
+                assert.equal (1, w.all (mbid, owl.sameAs, 'https://b.nl/100').length);
             });
         });
     });
