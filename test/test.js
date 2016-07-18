@@ -38,6 +38,17 @@
     const when = require ('when');
     const find = require ('../lib/find');
 
+    const a = find.a;
+    const cc = find.namespaces.cc;
+    const dc = find.namespaces.dc;
+    const foaf = find.namespaces.foaf;
+    const owl = find.namespaces.owl;
+    const rdf = find.namespaces.rdf;
+    const rdfs = find.namespaces.rdfs;
+    const schema = find.namespaces.schema;
+    const sioc = find.namespaces.sioc;
+    const xsd = find.namespaces.xsd;
+
     let REMOTE_TESTS = false;
 
     if (typeof process !== 'undefined' && process.env.WALD_FIND_REMOTE_TESTS) {
@@ -53,8 +64,8 @@
     // FIXME: should be a utility function somewhere
     function loadTestData (key) {
         const turtle = testData[key];
-        const parser = N3.Parser ();
-        const store = N3.Store ();
+        const parser = new N3.Parser ();
+        const store = new N3.Store ();
         const deferred = when.defer ();
 
         parser.parse (
@@ -110,14 +121,12 @@
     suite ('find', function () {
         suite ('namespaces', function () {
             test ('common terms', function () {
-                const ns = find.namespaces;
-
-                assert.equal (find.a, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-                assert.equal (ns.rdf.type, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
-                assert.equal (ns.owl.sameAs, 'http://www.w3.org/2002/07/owl#sameAs');
-                assert.equal (ns.rdfs.comment, 'http://www.w3.org/2000/01/rdf-schema#comment');
-                assert.equal (ns.xsd.string, 'http://www.w3.org/2001/XMLSchema#string');
-                assert.equal (ns.dc.title, 'http://purl.org/dc/terms/title');
+                assert.equal (a, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+                assert.equal (rdf.type, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type');
+                assert.equal (owl.sameAs, 'http://www.w3.org/2002/07/owl#sameAs');
+                assert.equal (rdfs.comment, 'http://www.w3.org/2000/01/rdf-schema#comment');
+                assert.equal (xsd.string, 'http://www.w3.org/2001/XMLSchema#string');
+                assert.equal (dc.title, 'http://purl.org/dc/terms/title');
             });
 
             test ('prefix', function () {
@@ -173,7 +182,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = find.namespaces.dc;
 
                     let triple = w.first (null, dc.title, null);
 
@@ -197,7 +205,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = find.namespaces.dc;
 
                     let subject = w.firstSubject (dc.title);
                     assert.equal (subject, id);
@@ -216,7 +223,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const dc = find.namespaces.dc;
 
                     let obj = w.firstObject (null, dc.title);
                     assert.equal (obj, N3.Util.createLiteral ('copyleft-next'));
@@ -234,7 +240,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = find.namespaces.cc;
 
                     const triples = w.all (id, cc.permits);
                     assert.equal (triples.length, 3);
@@ -254,7 +259,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = find.namespaces.cc;
 
                     const subjects = w.allSubjects (find.a, cc.License);
                     assert.equal (subjects.length, 1);
@@ -271,7 +275,6 @@
                     const w = find.factory (store);
 
                     const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
-                    const cc = find.namespaces.cc;
 
                     const objs = w.allObjects (id, cc.permits);
                     assert.equal (objs.length, 3);
@@ -376,7 +379,6 @@
         });
 
         suite ('tools', function () {
-
             test ('integer', function () {
                 const twentyone = find.tools.integer ('"21"');
                 assert.equal (twentyone, 21);
@@ -467,14 +469,104 @@
                 });
             });
 
-            test ('replaceId', function () {
-                const store = N3.Store ();
-                const a = find.a;
+            test ('sortQuads', function () {
+                const triples = [
+                    {subject: 'https://b.nl/200', predicate: rdf.subject, object: '_:b100'},
+                    {subject: 'https://b.nl/200', predicate: a, object: rdf.Statement},
+                    {subject: '_:b100', predicate: foaf.name, object: '倖田來未'},
+                    {subject: '_:b100', predicate: foaf.name, object: 'Koda Kumi'},
+                ];
 
-                const foaf = find.namespaces.foaf;
-                const owl = find.namespaces.owl;
-                const rdf = find.namespaces.rdf;
-                const schema = find.namespaces.schema;
+                const sorted = find.tools.sortQuads (triples);
+
+                assert.equal ('_:b100', sorted[0].subject);
+                assert.equal ('_:b100', sorted[1].subject);
+                assert.equal (foaf.name, sorted[0].predicate);
+                assert.equal (foaf.name, sorted[1].predicate);
+                assert.equal ('Koda Kumi', sorted[0].object);
+                assert.equal ('倖田來未', sorted[1].object);
+
+                assert.equal ('https://b.nl/200', sorted[3].subject);
+                assert.equal (rdf.type, sorted[3].predicate);
+                assert.equal (rdf.Statement, sorted[3].object);
+            });
+
+            test ('storeFromArray (array of arrays)', function () {
+                const triples = [
+                    ['_:b100', a, schema.MusicGroup],
+                    ['_:b100', foaf.name, '倖田來未'],
+                    ['https://b.nl/200', a, rdf.Statement],
+                    ['https://b.nl/200', rdf.subject, '_:b100']
+                ];
+
+                const store = find.tools.storeFromArray (triples);
+
+                assert.isOk (store instanceof N3.Store);
+                assert.equal (4, store.find (null, null, null, null).length);
+            });
+
+            test ('storeFromArray (array of objects)', function () {
+                const triples = [
+                    {subject: 'https://b.nl/200', predicate: rdf.subject, object: '_:b100'},
+                    {subject: 'https://b.nl/200', predicate: a, object: rdf.Statement},
+                    {subject: '_:b100', predicate: foaf.name, object: '倖田來未'},
+                    {subject: '_:b100', predicate: a, object: schema.MusicGroup},
+                ];
+
+                const store = find.tools.storeFromArray (triples);
+
+                assert.isOk (store instanceof N3.Store);
+
+                const results = find.tools.sortQuads (store.find (null, null, null, null));
+                assert.equal (4, results.length);
+
+                assert.deepEqual ({
+                    subject: '_:b100', predicate: a, object: schema.MusicGroup, graph: ''
+                }, results[0]);
+
+                assert.deepEqual ({
+                    subject: '_:b100', predicate: foaf.name, object: '倖田來未', graph: ''
+                }, results[1]);
+
+                assert.deepEqual ({
+                    subject: 'https://b.nl/200', predicate: rdf.subject, object: '_:b100',
+                    graph: ''
+                }, results[2]);
+
+                assert.deepEqual ({
+                    subject: 'https://b.nl/200', predicate: rdf.type, object: rdf.Statement,
+                    graph: ''
+                }, results[3]);
+            });
+
+            test ('dereify', function () {
+                const triples = [
+                    ['_:addName', a, rdf.Statement],
+                    ['_:addName', rdf.subject, '_:kodakumi'],
+                    ['_:addName', rdf.predicate, foaf.name],
+                    ['_:addName', rdf.object, '倖田來未'],
+                    ['_:addTwitter', a, rdf.Statement],
+                    ['_:addTwitter', rdf.subject, '_:kodakumi'],
+                    ['_:addTwitter', rdf.predicate, sioc.Microblog],
+                    ['_:addTwitter', rdf.object, 'https://twitter.com/kodakuminet'],
+                ];
+
+                const results = find.tools.sortQuads (find.tools.dereify (triples));
+                assert.equal (2, results.length);
+
+                assert.deepEqual ({
+                    subject: '_:kodakumi', predicate: sioc.Microblog,
+                    object: 'https://twitter.com/kodakuminet', graph: ''
+                }, results[0]);
+
+                assert.deepEqual ({
+                    subject: '_:kodakumi', predicate: foaf.name,
+                    object: '倖田來未', graph: ''
+                }, results[1]);
+            });
+
+            test ('replaceId', function () {
+                const store = new N3.Store ();
 
                 const mbid = 'http://musicbrainz.org/artist/'
                     + '455641ea-fff4-49f6-8fb4-49f961d8f1ac';
