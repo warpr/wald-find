@@ -376,6 +376,29 @@
                     done ();
                 }, done);
             });
+
+            test ('has', function (done) {
+                loadCopyleftNext ().then (function (result) {
+                    const store = result.store;
+                    const w = find.factory (store);
+
+                    const id = 'https://licensedb.org/id/copyleft-next-0.3.0';
+                    const copyleftNext = N3.Util.createLiteral ('copyleft-next');
+
+                    assert.isOk (w.has (id, dc.title, copyleftNext));
+                    assert.isOk (w.has (null, dc.title, copyleftNext));
+                    assert.isOk (w.has (id, null, copyleftNext));
+                    assert.isOk (w.has (id, dc.title, null));
+                    assert.isOk (w.has (null, null, copyleftNext));
+                    assert.isOk (w.has (null, dc.title, null));
+                    assert.isOk (w.has (id, null, null));
+                    assert.isNotOk (w.has (id, dc.title, N3.Util.createLiteral ('copyleft')));
+                    assert.isNotOk (w.has (id, dc.creator, copyleftNext));
+                    assert.isNotOk (w.has (id + '.html', dc.title, copyleftNext));
+
+                    done ();
+                }, done);
+            });
         });
 
         suite ('tools', function () {
